@@ -1,0 +1,64 @@
+* {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+h1 {
+  font-size: 1.2rem;
+}
+
+.container {
+  border: 1px solid black;
+  margin-top: 2em;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  border: 1px dotted rgb(236, 20, 20);
+}
+
+.header__logo {
+  width: 20%;
+}
+
+
+/* SEARCH SECTION */
+
+.search-section__search-bar-container {
+  height: 60px;
+  margin-top: 1em;
+  margin-bottom: 1.6em;
+  border: 3px dotted rgb(236, 20, 20);
+}
+
+#search-bar {
+  width: 100%;
+  padding: 1em;
+  background-color: #E7E7E7;
+  border: none;
+}
+
+
+/* SECTION RECIPES */
+
+.all-recipes {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.article-recipe {
+  height: 60vh;
+  border: 1px solid green;
+}
+
+.article-recipe__img {
+  height: 45%;
+  width: 100%;
+  background-color: #C7BEBE;
+}
+
+.article-recipe__content {
+  background-color: #E7E7E7;
+}
