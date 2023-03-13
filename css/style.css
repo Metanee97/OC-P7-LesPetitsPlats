@@ -10,7 +10,7 @@
 }
 
 h1 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 }
 
 ul {
@@ -18,10 +18,7 @@ ul {
   list-style-type: none;
 }
 
-
-
 .container {
-  border: 1px solid black;
   margin-top: 2em;
 }
 
@@ -33,7 +30,6 @@ ul {
 .header {
   display: flex;
   justify-content: center;
-  border: 1px dotted rgb(236, 20, 20);
 }
 
 .header__logo {
@@ -112,7 +108,17 @@ ul {
   font-size: 1.5rem;
 }
 
+.recipe__content-header__time {
+  font-size: 1.3rem;
+}
+
 .recipe__content__details {
   font-size: 0.8rem;
   line-height: normal;
+}
+
+.recipe__content__instructions {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
