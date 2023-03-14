@@ -94,18 +94,8 @@ displayRecipes(recipes);
 BARRE PRINCIPALE DE RECHERCHE
 */
 
-//cible input dans le DOM
-const inputValue = document.getElementById('search-bar');
 
-// console.log(inputValue);
 
-inputValue.oninput = (e) => { console.log(inputValue.value.trim())};
-
-// input.addEventListener('input', function(e) {
-//   if (input.textLength >= 3) {
-//     console.log("OK");
-//   }
-// })
 
 
 /*
