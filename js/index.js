@@ -2,85 +2,115 @@
 const recipes = await fetch('../data/recipes.json').then(recipes => recipes.json());
 
 //récupération des ingrédients
-const detailledIngredients = recipes.map(recipe => recipe.ingredients);
-
-console.log(detailledIngredients);
-
+// const detailledIngredients = recipes.map(recipe => recipe.ingredients);
 
 //cible du DOM
 const $recipesSection = document.querySelector('.all-recipes');
 
-// CREATION DOM AVEC APPENDCHILD
-for (let i = 0; i < recipes.length; i++) {
+// CREATION RECETTES
+function displayRecipes(recipes) {
 
-  //creation article
-  const article = document.createElement('article');
-  article.classList.add('article-recipe');
-  article.classList.add('col');
-  $recipesSection.appendChild(article);
+  for (let i = 0; i < recipes.length; i++) {
 
- //creation img
-  const recipeImg = document.createElement('div');
-  recipeImg.classList.add('recipe__img');
-  article.appendChild(recipeImg);
+    //creation article
+    const article = document.createElement('article');
+    article.classList.add('article-recipe');
+    // article.classList.add('col-4');
+    $recipesSection.appendChild(article);
 
- //creation conteneur de contenu
-  const recipeContent = document.createElement('div');
-  recipeContent.classList.add('recipe__content');
-  article.appendChild(recipeContent);
+    //creation img
+    const recipeImg = document.createElement('div');
+    recipeImg.classList.add('recipe__img');
+    article.appendChild(recipeImg);
 
-// //   //creation header de contenu
-  const recipeHeader = document.createElement('div');
-  recipeHeader.classList.add('recipe__content-header');
-  recipeHeader.classList.add('row');
-  recipeContent.appendChild(recipeHeader);
+    //creation conteneur de contenu
+    const recipeContent = document.createElement('div');
+    recipeContent.classList.add('recipe__content');
+    article.appendChild(recipeContent);
 
-// //   //creation titre
-  const recipeTitle = document.createElement('h1');
-  recipeTitle.classList.add('col-8')
-  recipeTitle.innerText = recipes[i].name;
-  recipeHeader.appendChild(recipeTitle);
+    //creation header de contenu
+    const recipeHeader = document.createElement('div');
+    recipeHeader.classList.add('recipe__content-header');
+    recipeContent.appendChild(recipeHeader);
 
-// //   //creation temps
-  const recipeTime = document.createElement('p');
-  recipeTime.classList.add('recipe__content-header__time');
-  recipeTime.classList.add('col');
-  recipeTime.innerText = `${recipes[i].time} min`;
-  recipeHeader.appendChild(recipeTime);
+    //creation titre
+    const recipeTitleContainer = document.createElement('div');
+    recipeTitleContainer.classList.add('recipe__content-header-title')
+    const recipeTitle = document.createElement('h1');
+    recipeTitle.innerText = recipes[i].name;
+    recipeHeader.appendChild(recipeTitleContainer);
+    recipeTitleContainer.appendChild(recipeTitle);
 
-// //   //creation contenu texte
-  const recipeDetails = document.createElement('div');
-  recipeDetails.classList.add('recipe__content__details');
-  recipeDetails.classList.add('row');
-  recipeContent.appendChild(recipeDetails);
+    //creation temps
+    const recipeTime = document.createElement('p');
+    recipeTime.classList.add('recipe__content-header__time');
+    recipeTime.innerText = `${recipes[i].time} min`;
+    recipeHeader.appendChild(recipeTime);
 
-// //   //creation contenu ingrédients
-  const recipeIngredients = document.createElement('div');
-  recipeIngredients.classList.add('recipe__content__ingredients');
-  recipeIngredients.classList.add('col');
-  recipeDetails.appendChild(recipeIngredients);
+    const recipeTimeIcon = document.createElement('i');
+    recipeTimeIcon.classList.add('far');
+    recipeTimeIcon.classList.add('fa-clock');
+    recipeTime.insertAdjacentElement('afterbegin', recipeTimeIcon);
 
-// //   //creation liste ingrédients
-  const recipeListIngredients = document.createElement('ul');
+    //creation contenu texte
+    const recipeDetails = document.createElement('div');
+    recipeDetails.classList.add('recipe__content__details');
+    recipeContent.appendChild(recipeDetails);
 
-  for (let j = 0; j < recipes[i].ingredients.length; j++) {
-    const listIng = document.createElement('li');
-    // listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp;' + recipes[i].ingredients[j].quantity + '&nbsp;' + recipes[i].ingredients[j].unit;
-    let quantity = recipes[i].ingredients[j].quantity ?? '&nbsp';
-    let unit = recipes[i].ingredients[j].unit ?? '&nbsp';
+    //creation contenu ingrédients
+    const recipeIngredients = document.createElement('div');
+    recipeIngredients.classList.add('recipe__content__ingredients');
+    recipeDetails.appendChild(recipeIngredients);
 
-    listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp' + quantity + '&nbsp' + unit;
+    //creation liste ingrédients
+    const recipeListIngredients = document.createElement('ul');
 
-    recipeListIngredients.appendChild(listIng);
+    for (let j = 0; j < recipes[i].ingredients.length; j++) {
+      const listIng = document.createElement('li');
+      // listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp;' + recipes[i].ingredients[j].quantity + '&nbsp;' + recipes[i].ingredients[j].unit;
+      let quantity = recipes[i].ingredients[j].quantity ?? '&nbsp';
+      let unit = recipes[i].ingredients[j].unit ?? '&nbsp';
 
+      listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp' + quantity + '&nbsp' + unit;
+
+      recipeListIngredients.appendChild(listIng);
+    }
+    recipeIngredients.appendChild(recipeListIngredients);
+
+    // Instructions
+    const instructionsRecipe = document.createElement('div');
+    instructionsRecipe. classList.add('recipe__content__instructions');
+    // instructionsRecipe. classList.add('col');
+    instructionsRecipe.innerText = recipes[i].description;
+    recipeDetails.appendChild(instructionsRecipe);
   }
-
-  recipeIngredients.appendChild(recipeListIngredients);
-
-  //description
-  const instructionsRecipe = document.createElement('div');
-  instructionsRecipe. classList.add('recipe__content__instructions');
-  instructionsRecipe. classList.add('col');
-  instructionsRecipe.innerText = recipes[i].description;
-  recipeDetails.appendChild(instructionsRecipe);
 }
+
+displayRecipes(recipes);
+
+
+/*
+
+BARRE PRINCIPALE DE RECHERCHE
+*/
+
+//cible input dans le DOM
+const inputValue = document.getElementById('search-bar');
+
+// console.log(inputValue);
+
+inputValue.oninput = (e) => { console.log(inputValue.value.trim())};
+
+// input.addEventListener('input', function(e) {
+//   if (input.textLength >= 3) {
+//     console.log("OK");
+//   }
+// })
+
+
+/*
+MISE A JOUR DES RESULTATS
+*/
+
+// $recipesSection.innerHTML = "";
+// displayRecipes();

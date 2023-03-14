@@ -10,7 +10,10 @@
 }
 
 h1 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  font-weight: lighter;
+  margin: 0;
+
 }
 
 ul {
@@ -18,10 +21,11 @@ ul {
   list-style-type: none;
 }
 
-.container {
+.wrapper {
+  margin-left: 5em;
+  margin-right: 5em;
   margin-top: 2em;
 }
-
 
 
 /* HEADER  */
@@ -51,15 +55,14 @@ ul {
   border-radius: 5px;
 }
 
-.search-bar {
-  /* width: 100%; */
+#search-bar {
+  width: 100%;
   padding: 1em;
   background-color: #E7E7E7;
   border: none;
-  color: aqua;
 }
 
-.search-bar::placeholder {
+#search-bar::placeholder {
   opacity: 0.50;
 }
 
@@ -72,53 +75,74 @@ ul {
 /* SECTION RECIPES */
 
 .all-recipes {
-  /* max-width: 100%; */
-  margin-top: 1em;
-  margin-bottom: 1em;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 30px;
 }
 
 .article-recipe {
-  width: 30%;
-  height: 60vh;
-  /* padding: 0; */
+  height: 50vh;
   border-radius: 5px;
   /* border: 1px solid green; */
 }
 
 .recipe__img {
   height: 45%;
-  width: 100%;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
   background-color: #C7BEBE;
 }
 
 .recipe__content {
+  height: 55%;
   background-color: #E7E7E7;
   padding: 1em;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
-  /* border: 1px solid blue; */
 }
 
 .recipe__content-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 1em;
+  margin-bottom: 0.8em;
   font-size: 1.5rem;
 }
 
+.recipe__content-header-title {
+  width: 70%;
+}
+
+.fa-clock {
+  margin-right: 0.3em;
+  font-weight: bold;
+}
+
 .recipe__content-header__time {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 0;
 }
 
 .recipe__content__details {
+  display: flex;
+  justify-content: space-between;
   font-size: 0.8rem;
-  line-height: normal;
+}
+
+.recipe__content__ingredients {
+  margin-right: 0.5em;
+}
+
+.recipe__content__details ul {
+  margin: 0;
 }
 
 .recipe__content__instructions {
-  overflow: hidden;
+  /* border: 1px solid red; */
+  width: 70%;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden;
 }
