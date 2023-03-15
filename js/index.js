@@ -92,7 +92,27 @@ displayRecipes(recipes);
 /*
 
 BARRE PRINCIPALE DE RECHERCHE
+recherche dans recipes[i].name ,
+recipes[i].description et
+recipes[i].ingredients[j].ingredient
+
 */
+
+//cible input dans le DOM
+const input = document.getElementById('search-bar');
+
+// stocke entrée utilisateur
+// si entrée user >= 3 alors lance la recherche
+let searchUser = "";
+input.addEventListener('input', function(e) {
+  searchUser = input.value.trim();
+
+  if (searchUser.length >= 3 ) {
+    console.log("ok");
+  }
+})
+
+
 
 
 
