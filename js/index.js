@@ -1,16 +1,90 @@
-//Récupération des recettes
-const recipes = await fetch('../data/recipes.json').then(recipes => recipes.json());
+// Recipes variables
+let recipes = [];
+const errorRecipesMessage = 'No recipes found'
 
-//récupération des ingrédients
-// const detailledIngredients = recipes.map(recipe => recipe.ingredients);
+// Url to Fetch
+const urlToFetch = '../data/recipes.json'
+
+// Search & Filter
+let filterRecipes = [];
+let searchUser = "";
+let recipesIngredients = [];
+let selectedIngredients = [];
+let recipesAppareils = [];
+let selectedAppareils = [];
+let recipesUstensiles = [];
+let selectedUstensiles = [];
+const errorSearchMessage = 'Aucune recette ne correspond à votre critère... vous pouvez chercher'
 
 //cible du DOM
-const $recipesSection = document.querySelector('.all-recipes');
+const $recipesSection = getQS('.all-recipes');
+const searchFiltersSection = getQS('#search-section__filters-container');
 
-// CREATION RECETTES
-function displayRecipes(recipes) {
+// Récupération des recipes
+recipes = await fetchRecipesJSON()
+      .catch((error) => error.message)
 
-  for (let i = 0; i < recipes.length; i++) {
+// Init
+displayRecipes();
+
+
+/*
+SearchBar : Champ de recherche
+*/
+
+//cible input dans le DOM
+const input = document.getElementById('search-bar');
+
+input.addEventListener('input', function () {
+  searchUser = input.value.trim().toLowerCase();
+  // si entrée user >= 3 alors lance la recherche | si champ recherche vide on clear le filtre actif
+  if (searchUser.length >= 3 || searchUser.length === 0) {
+    getFilterRecipes();
+  }
+})
+
+/**
+ * Function
+ */
+
+async function fetchRecipesJSON() {
+  const response = await fetch(urlToFetch);
+  if (!response.ok) {
+    const message = `An error has occurred: ${response.status}`;
+    throw new Error(message);
+  }
+  return await response.json();
+}
+
+
+
+
+function displayRecipes() {
+  // Clear
+  $recipesSection.innerHTML = '';
+  recipesIngredients = [];
+  recipesAppareils = [];
+  recipesUstensiles = [];
+
+  // Si ni filter avec
+  if (filterRecipes.length === 0) {
+    // Pas de recette
+    if (recipes.length === 0) {
+      displayMessage(errorRecipesMessage);
+      return;
+    }
+    // Au moins un tableau d'une recette
+    if (recipes.length > 0) {
+      filterRecipes = recipes;
+    }
+  }
+
+  for (let i = 0; i < filterRecipes.length; i++) {
+
+    // Tableau unique des appareils
+    if (recipesAppareils.indexOf(filterRecipes[i].appliance.toLowerCase()) === -1) {
+      recipesAppareils[recipesAppareils.length] = filterRecipes[i].appliance.toLowerCase()
+    }
 
     //creation article
     const article = document.createElement('article');
@@ -37,19 +111,18 @@ function displayRecipes(recipes) {
     const recipeTitleContainer = document.createElement('div');
     recipeTitleContainer.classList.add('recipe__content-header-title')
     const recipeTitle = document.createElement('h1');
-    recipeTitle.innerText = recipes[i].name;
+    recipeTitle.innerText = filterRecipes[i].name;
     recipeHeader.appendChild(recipeTitleContainer);
     recipeTitleContainer.appendChild(recipeTitle);
 
     //creation temps
     const recipeTime = document.createElement('p');
     recipeTime.classList.add('recipe__content-header__time');
-    recipeTime.innerText = `${recipes[i].time} min`;
+    recipeTime.innerText = `${filterRecipes[i].time} min`;
     recipeHeader.appendChild(recipeTime);
 
     const recipeTimeIcon = document.createElement('i');
-    recipeTimeIcon.classList.add('far');
-    recipeTimeIcon.classList.add('fa-clock');
+    recipeTimeIcon.classList.add('far', 'fa-clock');
     recipeTime.insertAdjacentElement('afterbegin', recipeTimeIcon);
 
     //creation contenu texte
@@ -65,62 +138,73 @@ function displayRecipes(recipes) {
     //creation liste ingrédients
     const recipeListIngredients = document.createElement('ul');
 
-    for (let j = 0; j < recipes[i].ingredients.length; j++) {
+    for (let j = 0; j < filterRecipes[i].ingredients.length; j++) {
       const listIng = document.createElement('li');
       // listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp;' + recipes[i].ingredients[j].quantity + '&nbsp;' + recipes[i].ingredients[j].unit;
-      let quantity = recipes[i].ingredients[j].quantity ?? '&nbsp';
-      let unit = recipes[i].ingredients[j].unit ?? '&nbsp';
+      let quantity = filterRecipes[i].ingredients[j].quantity ?? '&nbsp';
+      let unit = filterRecipes[i].ingredients[j].unit ?? '&nbsp';
+      let ingredient = filterRecipes[i].ingredients[j].ingredient;
 
-      listIng.innerHTML = recipes[i].ingredients[j].ingredient + ':&nbsp' + quantity + '&nbsp' + unit;
+      listIng.innerHTML = ingredient + ':&nbsp' + quantity + '&nbsp' + unit;
 
       recipeListIngredients.appendChild(listIng);
+
+      // Tableau unique des ingrédients
+      if (recipesIngredients.indexOf(ingredient.toLowerCase()) === -1) {
+        recipesIngredients[recipesIngredients.length] = ingredient.toLowerCase();
+      }
     }
     recipeIngredients.appendChild(recipeListIngredients);
 
     // Instructions
     const instructionsRecipe = document.createElement('div');
-    instructionsRecipe. classList.add('recipe__content__instructions');
+    instructionsRecipe.classList.add('recipe__content__instructions');
     // instructionsRecipe. classList.add('col');
-    instructionsRecipe.innerText = recipes[i].description;
+    instructionsRecipe.innerText = filterRecipes[i].description;
     recipeDetails.appendChild(instructionsRecipe);
+
+    // Tableau unique des ustensiles
+    filterRecipes[i].ustensils.forEach((ustensile) => {
+      if (recipesUstensiles.indexOf(ustensile.toLowerCase()) === -1) {
+        recipesUstensiles[recipesUstensiles.length] = ustensile.toLowerCase();
+      }
+    })
   }
 }
 
-displayRecipes(recipes);
 
+function getQS(id) {
+  return document.querySelector(id);
+}
 
-/*
+function getFilterRecipes() {
+  filterRecipes = recipes
+      .filter((recipe) => recipe.name.toLowerCase().includes(searchUser))
 
-BARRE PRINCIPALE DE RECHERCHE
-recherche dans recipes[i].name ,
-recipes[i].description et
-recipes[i].ingredients[j].ingredient
-
-*/
-
-//cible input dans le DOM
-const input = document.getElementById('search-bar');
-
-// stocke entrée utilisateur
-// si entrée user >= 3 alors lance la recherche
-let searchUser = "";
-input.addEventListener('input', function(e) {
-  searchUser = input.value.trim();
-
-  if (searchUser.length >= 3 ) {
-    console.log("ok");
+  // Si on a une selection d'appareil
+  if (selectedAppareils.length > 0) {
+    filterRecipes = filterRecipes.filter((recipe) => selectedAppareils.includes(recipe.appliance.toLowerCase()))
   }
-})
+  // Si on a une sélection d'ustensiles
+  if (selectedUstensiles.length > 0) {
+    filterRecipes = filterRecipes.filter((recipe) => selectedUstensiles.some((ustensile) => recipe.ustensils.map((us) => us.toLowerCase()).includes(ustensile.toLowerCase())))
+  }
+
+  // Si on a une sélection d'ingrédient
+  if (selectedIngredients.length > 0) {
+    filterRecipes = filterRecipes.filter((recipe) => selectedIngredients.every((item) => recipe.ingredients.map((ing) => ing.ingredient.toLowerCase()).includes(item.toLowerCase())));
+  }
 
 
+  if (filterRecipes.length > 0) {
+    displayRecipes()
+  } else {
+    const proposalTitles = ` «${recipes[0].name}», «${recipes[1].name}»`
+    displayMessage(errorSearchMessage + proposalTitles)
+  }
+}
 
 
-
-
-
-/*
-MISE A JOUR DES RESULTATS
-*/
-
-// $recipesSection.innerHTML = "";
-// displayRecipes();
+function displayMessage(message) {
+  $recipesSection.innerHTML = "<div style='display: block'><span>" + message + "</span></div>"
+}

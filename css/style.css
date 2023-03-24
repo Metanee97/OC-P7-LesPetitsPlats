@@ -71,6 +71,11 @@ ul {
   margin: 1em;
 }
 
+#search-bar:focus-visible {
+  outline: none;
+}
+
+
 
 /* SECTION RECIPES */
 
