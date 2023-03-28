@@ -16,13 +16,28 @@ let recipesUstensiles = [];
 let selectedUstensiles = [];
 const errorSearchMessage = 'Aucune recette ne correspond à votre critère... vous pouvez chercher'
 
+const FilterKeys = {
+  USTENSILS: 'ustensils',
+  INGREDIENTS: 'ingredients',
+  APPAREILS: 'appliance'
+};
+
+const selectedFilterArgs = {
+  [FilterKeys.USTENSILS]:   selectedUstensiles,
+  [FilterKeys.INGREDIENTS]: selectedIngredients,
+  [FilterKeys.APPAREILS]:   selectedAppareils
+};
+
+// Tags
+let tagArray = [];
+
 //cible du DOM
 const $recipesSection = getQS('.all-recipes');
-const searchFiltersSection = getQS('#search-section__filters-container');
+// const searchFiltersSection = getQS('#search-section__filters-container');
 
 // Récupération des recipes
 recipes = await fetchRecipesJSON()
-      .catch((error) => error.message)
+    .catch((error) => error.message)
 
 // Init
 displayRecipes();
@@ -34,7 +49,6 @@ SearchBar : Champ de recherche
 
 //cible input dans le DOM
 const input = document.getElementById('search-bar');
-
 input.addEventListener('input', function () {
   searchUser = input.value.trim().toLowerCase();
   // si entrée user >= 3 alors lance la recherche | si champ recherche vide on clear le filtre actif
@@ -43,8 +57,56 @@ input.addEventListener('input', function () {
   }
 })
 
+/*
+Filtre : Ustensile / Appareil / Ingredients
+*/
+
+// Récupérer tous les boutons et toutes les listes
+const btnFilters = document.querySelectorAll('.filter-item__button');
+
+// Événement pour cacher la liste déroulante lorsqu'on clique en dehors de celle-ci ou du bouton
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.filter-item') && (!e.target.closest('.filter-item__button'))) {
+    const activeFilter = document.querySelector('.filter-item.active')
+    if(activeFilter) {
+      activeFilter.classList.remove('active')
+    }
+  }
+});
+
+// Événement pour chaque bouton pour afficher/cacher la liste déroulante correspondante
+btnFilters.forEach((btn, i) => {
+  btn.addEventListener('click', toggleListe);
+});
+
+const inputsFilter = document.getElementsByTagName("input");
+for (const input of inputsFilter) {
+  // if (input.list instanceof HTMLDataListElement) {
+    input.addEventListener("input", () => {
+      let currentValue = input.value.trim().toLowerCase();
+      const { filter } = input.dataset;
+      let result;
+      switch (filter) {
+        case FilterKeys.INGREDIENTS:
+          result = recipesIngredients.filter(item => item.toLowerCase().includes(currentValue));
+          break;
+        case FilterKeys.APPAREILS:
+          result = recipesAppareils.filter(item => item.toLowerCase().includes(currentValue));
+          break;
+        case FilterKeys.USTENSILS:
+          result = recipesUstensiles.filter(item => item.toLowerCase().includes(currentValue));
+          break;
+        default:
+          result = [];
+          break;
+      }
+      createItemList(result, filter)
+    })
+  // }
+}
+
 /**
- * Function
+ * Fonction pour fetch le fichier JSON
  */
 
 async function fetchRecipesJSON() {
@@ -56,15 +118,71 @@ async function fetchRecipesJSON() {
   return await response.json();
 }
 
+/**
+ * Fonction pour afficher / cacher la liste des filtres
+ * @param e
+ */
+function toggleListe(e) {
+  let liste = e.target.nextElementSibling;
+  if(!liste) return;
+  liste = liste.closest('.filter-item')
+  if(!liste.classList.contains('active')) {
+    liste.classList.add('active')
+  } else {
+    liste.classList.remove('active')
+  }
+}
 
 
+/**
+ * Fonction qui va permettre de créer la liste des filtres par type
+ * @param listData
+ * @param listName
+ */
+function createItemList (listData, listName) {
+  const inputId = 'filter-' + listName;
+  const currentInput = getQS('#' + inputId);
+  const currentItemList = getQS('.' + listName + '-color-div');
+  const itemList = document.createElement('div');
+  const ul = document.createElement('ul');
 
+  if(!currentInput) return;
+
+  ul.classList.add(listName + '-color-ul');
+  itemList.classList.add('filter-item-list', listName + '-color', listName + '-color-div');
+
+  listData.forEach((item, index) => {
+    const li = document.createElement('li');
+    li.classList.add('list');
+
+    const itemBtn = document.createElement('button');
+    itemBtn.classList.add('filter-item-list__btn', listName + '-color');
+    itemBtn.innerHTML = item ;
+    itemBtn.addEventListener('click', () => createTagItemList(item, listName, index));
+
+    li.appendChild(itemBtn);
+    ul.appendChild(li);
+  });
+
+  itemList.appendChild(ul);
+
+  if(currentItemList) {
+    currentItemList.remove();
+  }
+
+  currentInput.parentNode.after(itemList);
+}
+
+
+/**
+ * Fonction qui va créer la liste des recettes à partir du tableau filtré et générer la liste des tags associés
+ */
 function displayRecipes() {
   // Clear
   $recipesSection.innerHTML = '';
-  recipesIngredients = [];
-  recipesAppareils = [];
-  recipesUstensiles = [];
+  recipesIngredients    = [];
+  recipesAppareils      = [];
+  recipesUstensiles     = [];
 
   // Si ni filter avec
   if (filterRecipes.length === 0) {
@@ -170,32 +288,49 @@ function displayRecipes() {
       }
     })
   }
+
+  createItemList(recipesUstensiles, 'ustensils')
+  createItemList(recipesAppareils, 'appliance')
+  createItemList(recipesIngredients, 'ingredients')
 }
 
-
+/**
+ * Fonction qui va retourner l'élément Node
+ * @param id
+ * @return {*}
+ */
 function getQS(id) {
   return document.querySelector(id);
 }
 
-function getFilterRecipes() {
-  filterRecipes = recipes
-      .filter((recipe) => recipe.name.toLowerCase().includes(searchUser))
+/**
+ * Fonction qui va filtrer la liste des recettes en fonction des sélections
+ */
 
-  // Si on a une selection d'appareil
+function getFilterRecipes() {
+  // Filtre sur le titre de la recette
+  filterRecipes = recipes
+      .filter((recipe) => {
+        return recipe.name.toLowerCase().includes(searchUser) || // Nom de la recette
+            recipe.description.toLowerCase().includes(searchUser) || // Description de la recette
+            recipe.ingredients.some((item) => item.ingredient.toLowerCase().includes(searchUser)) // Inclus dans les ingrédients de la recette
+      })
+
+  // Filtre si on a une selection d'appareil
   if (selectedAppareils.length > 0) {
     filterRecipes = filterRecipes.filter((recipe) => selectedAppareils.includes(recipe.appliance.toLowerCase()))
   }
-  // Si on a une sélection d'ustensiles
+  // Filtre si on a une sélection d'ustensiles
   if (selectedUstensiles.length > 0) {
     filterRecipes = filterRecipes.filter((recipe) => selectedUstensiles.some((ustensile) => recipe.ustensils.map((us) => us.toLowerCase()).includes(ustensile.toLowerCase())))
   }
 
-  // Si on a une sélection d'ingrédient
+  // Filtre si on a une sélection d'ingrédient
   if (selectedIngredients.length > 0) {
     filterRecipes = filterRecipes.filter((recipe) => selectedIngredients.every((item) => recipe.ingredients.map((ing) => ing.ingredient.toLowerCase()).includes(item.toLowerCase())));
   }
 
-
+  // Si on a un résultat on affiche la liste sinon on affiche le message de suggestions
   if (filterRecipes.length > 0) {
     displayRecipes()
   } else {
@@ -204,7 +339,10 @@ function getFilterRecipes() {
   }
 }
 
-
+/**
+ * Fonction qui va permettre de créer un message en lieu et en place de la liste des filtres
+ * @param message
+ */
 function displayMessage(message) {
   $recipesSection.innerHTML = "<div style='display: block'><span>" + message + "</span></div>"
 }

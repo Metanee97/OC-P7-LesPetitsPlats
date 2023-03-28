@@ -75,7 +75,137 @@ ul {
   outline: none;
 }
 
+/* FILTERS  */
+#search-section__filters-container {
+  height: 70px;
+}
 
+
+.filters-list {
+  display: flex;
+  gap: 15px;
+  position: absolute;
+}
+
+.filter-item__button {
+  padding: 10px 60px 10px 10px;
+  font-weight: bold;
+  font-size: 12px;
+  color: white;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  position: relative;
+}
+
+.filter-item__button::after {
+  position: absolute;
+  background: url(../assets/arrow.svg);
+  content: "";
+  top: 13px;
+  right: 20px;
+  width: 16px;
+  height: 11px;
+  z-index: 10;
+}
+
+.active .filter-item__button::after {
+  rotate: 180deg;
+}
+
+.active .filter-item__button {
+  border-radius: 0;
+}
+
+.active  .filter-item__button span {
+  display: none;
+}
+
+.active .search-filter__input {
+  display: block;
+}
+
+.search-filter__input {
+  display: none;
+  color: white;
+  border: none;
+  font-size: 10px;
+  width: 100%;
+}
+
+.ingredients-color {
+  background: #3282F7;
+}
+
+.appliance-color {
+  background: #68D9A4;
+}
+
+.ustensils-color {
+  background: #ED6454;
+}
+
+.filter-item-list {
+  padding: 5px 10px;
+  display: none;
+}
+
+.filter-item-list ul {
+  display: flex;
+  font-size: 10px;
+  border-radius: 0 0 5px 5px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  z-index: 20;
+  color: white;
+  width: 100%;
+  top: 0;
+}
+
+.filter-item-list li {
+  width: 33%;
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+.active .filter-item-list {
+  display: block;
+}
+.active .filter-item-list li {
+  display: block;
+}
+
+
+
+.filter-item-list__btn{
+  border: none;
+  color: white;
+  padding: 2px;
+  text-align: left;
+}
+
+#filter-in {
+  background: #3282F7;
+}
+
+#filter-ap {
+  background: #68D9A4;
+}
+
+#filter-us {
+  background: #ED6454;
+}
+
+.filter-item input::placeholder {
+  color: white;
+}
+
+.filter-item input:focus-visible {
+  outline: none;
+}
 
 /* SECTION RECIPES */
 
