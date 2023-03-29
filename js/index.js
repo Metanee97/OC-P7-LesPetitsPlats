@@ -133,6 +133,35 @@ function toggleListe(e) {
   }
 }
 
+/**
+ * Fonction qui va à partir d'un tableau généré la liste des tags
+ * Chaque item du tableau a un titre et un type
+ */
+
+function showFilterTag() {
+  const filterSection = document.querySelector('#filter-tags');
+
+  const ul = document.createElement('ul');
+  ul.classList.add('filter-tag-list');
+  tagArray.map(item => {
+    const li = document.createElement('li');
+    li.classList.add('filter-tag-item', item.listName+'-color');
+    const closeBtn = document.createElement('button');
+    const iconClose = document.createElement('i');
+    iconClose.classList.add('fa', 'fa-times-circle');
+    closeBtn.onclick = removeTag.bind(this, item);
+    li.id = item.name;
+    li.innerHTML = item.name ;
+    li.appendChild(closeBtn);
+    closeBtn.appendChild(iconClose);
+    ul.appendChild(li);
+  })
+  filterSection.innerHTML = '';
+  filterSection.append(ul);
+
+  // Apply filter to the recipes list
+  getFilterRecipes();
+}
 
 /**
  * Fonction qui va permettre de créer la liste des filtres par type
@@ -173,6 +202,39 @@ function createItemList (listData, listName) {
   currentInput.parentNode.after(itemList);
 }
 
+/**
+ * Fonction qui va ajouter les tags sélectionnés dans un tableau par l'utilisateur par titre et par type
+ * @param tagName
+ * @param tagList
+ * @param tagIndex
+ */
+function createTagItemList(tagName, tagList, tagIndex) {
+  const newTag = {
+    index: tagIndex,
+    name: tagName.toLowerCase(),
+    listName: tagList
+  }
+  let index = tagArray.findIndex(item => item.name === newTag.name)
+  if(index < 0) {
+    tagArray.push(newTag)
+    selectedFilterArgs[tagList].push(newTag.name.toLowerCase()) // Added to the proper selected tab (in, us,ap)
+  }
+  showFilterTag();
+}
+
+/**
+ * Fonction qui va permettre de retiré un tag dans la liste générale des tags et également du tableau qui recense ceux qui sont sélectionnés
+ * @param tagElement
+ */
+function removeTag(tagElement) {
+  const index = selectedFilterArgs[tagElement.listName].findIndex(item => item === tagElement.name)
+  if (index > -1) {
+    selectedFilterArgs[tagElement.listName].splice(index, 1); // Remove inside selected filter array
+    const indexTag = tagArray.findIndex(item => (item.index === tagElement.index) && (tagElement.name === item.name))
+    tagArray.splice(indexTag, 1); // Remove tag inside global tag array
+    showFilterTag();
+  }
+}
 
 /**
  * Fonction qui va créer la liste des recettes à partir du tableau filtré et générer la liste des tags associés

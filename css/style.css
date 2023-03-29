@@ -2,11 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto:wght@300;400;500;700;900&display=swap');
 
 * {
-	box-sizing: border-box;
-	-moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   font-family: 'Lato', sans-serif;
-  /* font-family: 'Roboto', sans-serif; */
 }
 
 h1 {
@@ -74,6 +73,7 @@ ul {
 #search-bar:focus-visible {
   outline: none;
 }
+
 
 /* FILTERS  */
 #search-section__filters-container {
@@ -207,6 +207,64 @@ ul {
   outline: none;
 }
 
+/* FILTER TAG */
+
+/* .search-section__filter-tags-container{
+  display: flex;
+  flex-wrap: wrap;
+} */
+
+/* .search-section__filter-tags-container li {
+  padding: 2px;
+} */
+
+/* #filter-in-tag, #filter-us-tag, #filter-ap-tag {
+  color: white;
+  font-size: 0.75rem;
+  position: relative;
+  border-radius: 5px;
+  cursor: pointer;
+} */
+
+#filter-tags {
+  display: flex;
+}
+
+.filter-tag-item {
+  /*display: flex;*/
+  display: inline-flex;
+  color: white;
+  padding: 10px 20px;
+  align-items: center;
+  border-radius: 5px;
+  margin-right: 0.7em;
+}
+
+.filter-tag-item button {
+  border: none;
+  background-color: transparent;
+  margin-left: 0.7em;
+}
+
+.fa-times-circle {
+  color: white;
+  font-size: 1.2rem;
+}
+
+#filter-us-tag {
+  background: #ED6454;
+}
+
+#filter-ap-tag {
+  background: #68D9A4;
+}
+
+#filter-in-tag {
+  background: #3282F7;
+}
+
+
+
 /* SECTION RECIPES */
 
 .all-recipes {
@@ -232,6 +290,7 @@ ul {
   height: 55%;
   background-color: #E7E7E7;
   padding: 1em;
+  overflow: hidden;
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
 }
